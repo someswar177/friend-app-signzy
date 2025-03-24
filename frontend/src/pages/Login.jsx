@@ -1,49 +1,102 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Github, Twitter, Linkedin, MessageSquare } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate();
-    const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const { data } = await axios.post('http://localhost:8800/api/user/login', { email, password });
-            login(data.token);
-            navigate('/home');
-        } catch (error) {
-            console.error('Login failed:', error.response?.data?.message || error.message);
-        }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post("http://localhost:8800/api/user/login", {
+        email,
+        password,
+      });
+      login(data.token); // Save token in Auth Context
+      navigate("/home"); // Redirect after login
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed! Try again.");
+    }
+  };
 
-    return (
-        <div className="login-container">
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <label>Email:</label>
-                <input 
-                    type="email" 
-                    placeholder="Email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)} 
-                    required
-                />
-                <label>Password:</label>
-                <input 
-                    type="password" 
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required
-                />
-                <button type="submit">Login</button>
-            </form>
+  return (
+    <div className="min-h-screen flex relative px-10 py-3">
+      <div className="hidden md:flex md:w-3/6 bg-blue-600 p-12 flex-col justify-center items-center text-center relative 
+        [clip-path:polygon(0_0,100%_0,75%_100%,0%_100%)]">
+        <div className="text-white text-4xl font-bold">FRIEND FINDER APP</div>
+        <div className="flex gap-4 text-white mt-6">
+          <Github className="w-8 h-8" />
+          <Twitter className="w-8 h-8" />
+          <Linkedin className="w-8 h-8" />
+          <MessageSquare className="w-8 h-8" />
         </div>
-    );
+      </div>
+
+      <div className="flex-1 flex items-center justify-center p-8 relative bg-white 
+        [clip-path:polygon(15%_0,100%_0,100%_100%,0%_100%)]">
+        <div className="w-full max-w-md">
+          <h1 className="text-3xl font-bold mb-2">Sign In</h1>
+          <p className="text-gray-600 mb-8">Sign in to your account</p>
+
+          <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl">
+            {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-2 rounded-lg border bg-gray-50"
+                placeholder="johndoe@gmail.com"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-2 rounded-lg border bg-gray-50"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <a href="#" className="text-blue-600 text-sm block mb-4">
+              Forgot password?
+            </a>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <p className="text-center mt-4 text-gray-600">
+            Don't have an account?{" "}
+            <a href="/register" className="text-blue-600">
+              Register here
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Login;
