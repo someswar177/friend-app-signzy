@@ -14,6 +14,14 @@ app.use(express.json());
 
 const connectDB = require("./config/database");
 
+const userRoutes = require("./routes/user");
+
+app.use("/api/user", userRoutes);
+
+app.get("/", (req, res) => {
+    res.status(200).json("Hello from friend-app-signzy backend server");
+});
+
 connectDB()
     .then(() => {
         app.listen(PORT, () => {
