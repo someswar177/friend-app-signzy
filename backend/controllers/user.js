@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 
 exports.signup = async (req, res) => {
   try {
+    console.log(req.body);
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -70,28 +71,24 @@ exports.getDashboardData = async (req, res) => {
   try {
     const userId = req.user._id;
 
+    // Fetch the user with populated friends & friend requests
+    const user = await User.findById(userId)
+      .populate("friends", "username createdAt")
+      .populate("incomingRequests", "username createdAt")
+      .populate("outgoingRequests", "username createdAt");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     // Fetch all users (excluding the current user)
-    const users = await User.find({ _id: { $ne: userId } }).select("username");
-
-    // Fetch friends
-    const user = await User.findById(userId).populate("friends", "username");
-    const friends = user.friends;
-
-    // Fetch incoming & outgoing friend requests
-    const incomingRequests = await User.find({ friends: userId }).select("username");
-    const outgoingRequests = await User.find({ _id: userId }).select("friends");
-
-    // Fetch recommended friends (example: users with mutual friends)
-    const recommendedFriends = await User.find({
-      _id: { $ne: userId, $nin: friends.map(f => f._id) }
-    }).limit(5).select("username");
+    const users = await User.find({ _id: { $ne: userId } }).select("username createdAt");
 
     res.status(200).json({
       users,
-      friends,
-      incomingRequests,
-      outgoingRequests,
-      recommendedFriends,
+      friends: user.friends,
+      incomingRequests: user.incomingRequests,
+      outgoingRequests: user.outgoingRequests,
     });
 
   } catch (error) {
@@ -302,7 +299,7 @@ exports.getRecommendedFriends = async (req, res) => {
     const recommendedUsers = await User.find({ _id: { $in: [...mutualFriendsMap.keys()] } }).select(
       "username"
     );
-
+    
     res.status(200).json(recommendedUsers);
   } catch (error) {
     console.error("Error fetching recommended friends:", error.message);
