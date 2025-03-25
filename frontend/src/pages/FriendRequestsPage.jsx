@@ -8,6 +8,7 @@ const FriendRequests = lazy(() => import("../components/FriendRequests"));
 const SentRequests = lazy(() => import("../components/SentRequests"));
 
 const FriendRequestsPage = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8800/api";
     const { token, logout } = useAuth();
     const [friendRequests, setFriendRequests] = useState([]);
     const [sentRequests, setSentRequests] = useState([]);
@@ -16,7 +17,7 @@ const FriendRequestsPage = () => {
     useEffect(() => {
         const fetchFriendRequests = async () => {
             try {
-                const { data } = await axios.get("http://localhost:8800/api/user/dashboard", {
+                const { data } = await axios.get(`${apiUrl}/user/dashboard`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -33,7 +34,7 @@ const FriendRequestsPage = () => {
     // Accept Friend Request
     const handleAcceptRequest = async (userId) => {
         try {
-            await axios.post(`http://localhost:8800/api/user/${userId}/accept-request`, {}, {
+            await axios.post(`${apiUrl}/user/${userId}/accept-request`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -46,7 +47,7 @@ const FriendRequestsPage = () => {
     // Reject Friend Request
     const handleRejectRequest = async (userId) => {
         try {
-            await axios.delete(`http://localhost:8800/api/user/${userId}/reject-request`, {
+            await axios.delete(`${apiUrl}/user/${userId}/reject-request`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

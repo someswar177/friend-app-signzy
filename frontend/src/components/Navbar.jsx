@@ -30,7 +30,7 @@ const Navbar = ({ logout }) => {
       {/* Right Side - Logout Button */}
       <button
         onClick={logout}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md flex items-center gap-2"
       >
         Logout
       </button>

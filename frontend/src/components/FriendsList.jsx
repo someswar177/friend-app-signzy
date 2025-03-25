@@ -3,7 +3,8 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import UserCard from "./UserCard"; // Import the UserCard component
 
-const FriendsList = ({ friends, setFriends }) => {  
+const FriendsList = ({ friends, setFriends }) => {
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8800/api";  
   const { token } = useAuth();
   const [friendList, setFriendList] = useState([]);
 
@@ -16,7 +17,7 @@ const FriendsList = ({ friends, setFriends }) => {
 
   const handleRemoveFriend = async (friendId) => {
     try {
-      await axios.delete(`http://localhost:8800/api/user/${friendId}/remove-friend`, {
+      await axios.delete(`${apiUrl}/user/${friendId}/remove-friend`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

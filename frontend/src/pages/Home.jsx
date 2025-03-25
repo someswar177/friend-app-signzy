@@ -13,6 +13,8 @@ const UsersList = lazy(() => import("../components/UsersList"));
 const RecommendedFriends = lazy(() => import("../components/RecommendedFriends"));
 
 const Home = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8800/api";
+    // console.log(apiUrl);
     const { token } = useAuth();
     const { logout } = useAuth();
     const [users, setUsers] = useState([]);
@@ -26,13 +28,13 @@ const Home = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const { data } = await axios.get("http://localhost:8800/api/user/dashboard", {
+                const { data } = await axios.get(`${apiUrl}/user/dashboard`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
                 setUsers(data.users);
                 setFriends(data.friends);
-                console.log(data);
+                // console.log(data);
                 setFriendRequests(data.incomingRequests);
                 setSentRequests(data.outgoingRequests);
             } catch (error) {
@@ -41,12 +43,12 @@ const Home = () => {
         };
         const recommendFriendsData = async () => {
             try {
-                const { data } = await axios.get("http://localhost:8800/api/user/friend/recommendations", {
+                const { data } = await axios.get(`${apiUrl}/user/friend/recommendations`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
                 setRecommendedFriends(data);
-                console.log(data);
+                // console.log(data);
             } catch (error) {
                 console.error("Error fetching dashboard data:", error);
             }
@@ -59,7 +61,7 @@ const Home = () => {
     // Send Friend Request
     const handleSendRequest = async (userId) => {
         try {
-            await axios.post(`http://localhost:8800/api/user/${userId}/send-request`, {}, {
+            await axios.post(`${apiUrl}/user/${userId}/send-request`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -71,7 +73,7 @@ const Home = () => {
 
     const handleRemoveFriend = async (friendId) => {
         try {
-            await axios.delete(`http://localhost:8800/api/user/${friendId}/remove-friend`, {
+            await axios.delete(`${apiUrl}/user/${friendId}/remove-friend`, {
                 headers: { Authorization: `Bearer ${token}` }, // Ensure token is provided
             });
             setFriends((prevFriends) => prevFriends.filter((friend) => friend._id !== friendId));
