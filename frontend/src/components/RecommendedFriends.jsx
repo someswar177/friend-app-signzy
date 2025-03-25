@@ -1,22 +1,30 @@
 import React from "react";
+import UserCard from "./UserCard";
+import { UserPlus } from "lucide-react";
 
 const RecommendedFriends = ({ recommendedFriends, handleSendRequest }) => {
   return (
     <div className="mb-6">
-      <h2 className="text-xl font-semibold mb-3 text-blue-500">Recommended Friends</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Recommended Friends</h2>
+
       {recommendedFriends.length === 0 ? (
-        <p className="text-gray-500">No recommendations yet</p>
+        <p className="text-gray-600 text-center">No recommendations yet</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {recommendedFriends.map((user) => (
-            <div key={user._id} className="p-4 bg-white shadow-md rounded-lg flex flex-col items-center">
-              {/* <img src={user.profilePicture || "/default-avatar.png"} alt="profile" className="w-12 h-12 rounded-full mb-2" /> */}
-              <p className="font-medium">{user.username}</p>
-              <button className="bg-blue-500 text-white px-4 py-1 mt-2 rounded-lg hover:bg-blue-600"
-                      onClick={() => handleSendRequest(user._id)}>
-                Add Friend
-              </button>
-            </div>
+            <UserCard
+              key={user._id}
+              user={user}
+              actionButton={
+                <button
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-all"
+                  onClick={() => handleSendRequest(user._id)}
+                >
+                  <UserPlus size={18} />
+                  Send Request
+                </button>
+              }
+            />
           ))}
         </div>
       )}

@@ -24,6 +24,7 @@ const Home = () => {
         setSearch(event.target.value);
     }, 300);
 
+    // Fetch all required data on mount
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
@@ -33,15 +34,28 @@ const Home = () => {
 
                 setUsers(data.users);
                 setFriends(data.friends);
+                console.log(data);
                 setFriendRequests(data.incomingRequests);
                 setSentRequests(data.outgoingRequests);
-                setRecommendedFriends(data.recommendedFriends);
+            } catch (error) {
+                console.error("Error fetching dashboard data:", error);
+            }
+        };
+        const recommendFriendsData = async () => {
+            try {
+                const { data } = await axios.get("http://localhost:8800/api/user/friend/recommendations", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                setRecommendedFriends(data);
+                console.log(data);
             } catch (error) {
                 console.error("Error fetching dashboard data:", error);
             }
         };
 
         fetchDashboardData();
+        recommendFriendsData();
     }, [token]);
 
     // Send Friend Request
@@ -84,39 +98,60 @@ const Home = () => {
         }
     };
 
+    const handleRemoveFriend = async (friendId) => {
+        try {
+            await axios.delete(`http://localhost:8800/api/user/${friendId}/remove-friend`, {
+                headers: { Authorization: `Bearer ${token}` }, // Ensure token is provided
+            });
+            setFriends((prevFriends) => prevFriends.filter((friend) => friend._id !== friendId));
+
+            setUsers((prevUsers) =>
+                prevUsers.map((user) =>
+                    user._id === friendId ? { ...user, isFriend: false } : user
+                )
+            );
+        } catch (error) {
+            console.error("Error removing friend:", error);
+        }
+    };
+
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen">
-            <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Friends Dashboard</h1>
-            {/* Search Bar */}
-            <SearchBar search={search} handleSearchChange={handleSearchChange} />
+        <Suspense fallback={<p>Loading...</p>}>
+            <div className="min-h-screen p-6">
+                <h1 className="text-3xl font-bold mb-4">Home</h1>
 
-            {/* Friend Requests */}
-            <FriendRequests
-                friendRequests={friendRequests}
-                handleAcceptRequest={handleAcceptRequest}
-                handleRejectRequest={handleRejectRequest}
-            />
+                {/* Search Bar */}
+                <SearchBar search={search} handleSearchChange={handleSearchChange} />
 
-            {/* Sent Requests */}
-            <SentRequests sentRequests={sentRequests} />
+                {/* Friend Requests */}
+                <FriendRequests
+                    friendRequests={friendRequests}
+                    handleAcceptRequest={handleAcceptRequest}
+                    handleRejectRequest={handleRejectRequest}
+                />
 
-            {/* Friends List */}
-            <FriendsList friends={friends} />
+                {/* Sent Requests */}
+                <SentRequests sentRequests={sentRequests} />
 
-            {/* Users List */}
-            <UsersList
-                users={users}
-                friends={friends}
-                sentRequests={sentRequests}
-                handleSendRequest={handleSendRequest}
-            />
+                {/* Friends List */}
+                <FriendsList friends={friends} />
 
-            {/* Recommended Friends */}
-            <RecommendedFriends
-                recommendedFriends={recommendedFriends}
-                handleSendRequest={handleSendRequest}
-            />
-        </div>
+                {/* Users List */}
+                <UsersList
+                    users={users}
+                    friends={friends}
+                    sentRequests={sentRequests}
+                    handleSendRequest={handleSendRequest}
+                    handleUnfriend={handleRemoveFriend}
+                />
+
+                {/* Recommended Friends */}
+                <RecommendedFriends
+                    recommendedFriends={recommendedFriends}
+                    handleSendRequest={handleSendRequest}
+                />
+            </div>
+        </Suspense>
     );
 };
 
