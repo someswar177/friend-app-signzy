@@ -1,33 +1,24 @@
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
+require("dotenv").config();
 const secretKey = process.env.SECRET;
 
 function getToken(user) {
-  const token = jwt.sign(
+  return jwt.sign(
     {
       _id: user._id,
-      name: user.name,
-      email: user.email
+      username: user.username,
     },
     secretKey,
-    {
-      expiresIn: "1h",
-    }
+    { expiresIn: "1h" }
   );
-
-  return token;
 }
 
 function extractJWTFromRequest(req) {
-  if (req.cookies && req.cookies.token) {
-    return req.cookies.token;
-  }
+  if (req.cookies && req.cookies.token) return req.cookies.token;
+
   const authHeader = req.headers.authorization;
-
   if (authHeader && authHeader.startsWith("Bearer ")) {
-    const token = authHeader.substring(7);
-
-    return token;
+    return authHeader.substring(7);
   }
 
   return null;
@@ -35,15 +26,10 @@ function extractJWTFromRequest(req) {
 
 const validateToken = (req, res, next) => {
   const token = extractJWTFromRequest(req);
-
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
+  if (!token) return res.status(401).json({ message: "No token provided" });
 
   jwt.verify(token, secretKey, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
+    if (err) return res.status(401).json({ message: "Invalid token" });
 
     req.user = decoded;
     next();
