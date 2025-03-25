@@ -4,10 +4,10 @@ const SearchBar = ({ search, handleSearchChange }) => {
   return (
     <input
       type="text"
-      placeholder="Search Users..."
-      className="w-full p-2 border rounded-lg mb-4"
+      placeholder="Search for friends..."
+      className="w-full p-3 rounded-md border border-gray-300 shadow-sm"
       defaultValue={search}
-      onChange={handleSearchChange}
+      onChange={(e) => handleSearchChange(e.target.value)}
     />
   );
 };

@@ -19,7 +19,7 @@ const Login = () => {
         password,
       });
       login(data.token); // Save token in Auth Context
-      navigate("/home"); // Redirect after login
+      navigate("/"); // Redirect after login
     } catch (err) {
       setError(err.response?.data?.message || "Login failed! Try again.");
     }

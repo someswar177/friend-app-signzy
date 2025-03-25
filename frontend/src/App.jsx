@@ -3,6 +3,7 @@ import { useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import FriendRequestsPage from "./pages/FriendRequestsPage";
 
 const PrivateRoute = ({ children }) => {
     const { token } = useAuth();
@@ -12,9 +13,10 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
     return (
         <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+            <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+            <Route path="/friend-requests" element={<PrivateRoute><FriendRequestsPage /></PrivateRoute>} />
         </Routes>
     );
 };

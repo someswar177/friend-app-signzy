@@ -16,7 +16,7 @@ const Register = () => {
         username,
         password,
       });
-      navigate("/"); // Redirect to login after successful registration
+      navigate("/login"); // Redirect to login after successful registration
     } catch (error) {
       setError(error.response?.data?.message || "Registration failed! Try again.");
     }
@@ -84,7 +84,7 @@ const Register = () => {
 
           <p className="text-center mt-4 text-gray-600">
             Already have an account?{" "}
-            <a href="/" className="text-blue-600">
+            <a href="/login" className="text-blue-600">
               Sign in here
             </a>
           </p>

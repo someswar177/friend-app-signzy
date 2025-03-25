@@ -31,7 +31,7 @@ const FriendsList = ({ friends, setFriends }) => {
 
   return (
     <div className="mb-6">
-      <h2 className="text-2xl font-semibold mb-2">Your Friends</h2>
+      {/* <h2 className="text-2xl font-semibold mb-2">Your Friends</h2> */}
       {friendList.length === 0 ? (
         <p>No friends yet</p>
       ) : (

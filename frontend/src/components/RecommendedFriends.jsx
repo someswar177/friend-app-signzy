@@ -5,7 +5,7 @@ import { UserPlus } from "lucide-react";
 const RecommendedFriends = ({ recommendedFriends, handleSendRequest }) => {
   return (
     <div className="mb-6">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Recommended Friends</h2>
+      {/* <h2 className="text-2xl font-semibold mb-4 text-gray-800">Recommended Friends</h2> */}
 
       {recommendedFriends.length === 0 ? (
         <p className="text-gray-600 text-center">No recommendations yet</p>

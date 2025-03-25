@@ -2,6 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { debounce } from "lodash";
+import Navbar from "../components/Navbar";
 
 // Lazy load components
 const SearchBar = lazy(() => import("../components/SearchBar"));
@@ -13,16 +14,13 @@ const RecommendedFriends = lazy(() => import("../components/RecommendedFriends")
 
 const Home = () => {
     const { token } = useAuth();
+    const { logout } = useAuth();
     const [users, setUsers] = useState([]);
     const [friends, setFriends] = useState([]);
     const [search, setSearch] = useState("");
     const [friendRequests, setFriendRequests] = useState([]);
     const [sentRequests, setSentRequests] = useState([]);
     const [recommendedFriends, setRecommendedFriends] = useState([]);
-
-    const handleSearchChange = debounce((event) => {
-        setSearch(event.target.value);
-    }, 300);
 
     // Fetch all required data on mount
     useEffect(() => {
@@ -71,33 +69,6 @@ const Home = () => {
         }
     };
 
-    // Accept Friend Request
-    const handleAcceptRequest = async (userId) => {
-        try {
-            await axios.post(`http://localhost:8800/api/user/${userId}/accept-request`, {}, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            setFriends([...friends, friendRequests.find(req => req._id === userId)]);
-            setFriendRequests(friendRequests.filter(req => req._id !== userId));
-        } catch (error) {
-            console.error("Error accepting friend request:", error);
-        }
-    };
-
-    // Reject Friend Request
-    const handleRejectRequest = async (userId) => {
-        try {
-            await axios.delete(`http://localhost:8800/api/user/${userId}/reject-request`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            setFriendRequests(friendRequests.filter(req => req._id !== userId));
-        } catch (error) {
-            console.error("Error rejecting friend request:", error);
-        }
-    };
-
     const handleRemoveFriend = async (friendId) => {
         try {
             await axios.delete(`http://localhost:8800/api/user/${friendId}/remove-friend`, {
@@ -115,41 +86,51 @@ const Home = () => {
         }
     };
 
+    const handleSearchChange = (value) => {
+        setSearch(value); // Update state directly
+    };
+
+    // Filter users based on search query
+    const filteredUsers = users.filter(user =>
+        user.username.toLowerCase().includes(search.toLowerCase())
+    );
+
     return (
         <Suspense fallback={<p>Loading...</p>}>
             <div className="min-h-screen p-6">
-                <h1 className="text-3xl font-bold mb-4">Home</h1>
+                <Navbar logout={logout} />
+                {/* <h1 className="text-3xl font-bold mb-4">Home</h1> */}
 
                 {/* Search Bar */}
-                <SearchBar search={search} handleSearchChange={handleSearchChange} />
+                <div className="p-4">
+                    <SearchBar search={search} handleSearchChange={handleSearchChange} />
+                    <div className="mt-5">
+                        <div>
+                            <h2 className="text-white text-2xl bg-green-600 px-4 py-2 my-4 rounded-md font-semibold">All Users</h2>
+                            <UsersList
+                                // users={users}
+                                users={filteredUsers}
+                                friends={friends}
+                                sentRequests={sentRequests}
+                                handleSendRequest={handleSendRequest}
+                                handleUnfriend={handleRemoveFriend}
+                            />
+                        </div>
 
-                {/* Friend Requests */}
-                <FriendRequests
-                    friendRequests={friendRequests}
-                    handleAcceptRequest={handleAcceptRequest}
-                    handleRejectRequest={handleRejectRequest}
-                />
+                        <div>
+                            <h2 className="text-white text-2xl bg-blue-600 px-4 py-2 my-4 rounded-md font-semibold">Suggested Friends</h2>
+                            <RecommendedFriends
+                                recommendedFriends={recommendedFriends}
+                                handleSendRequest={handleSendRequest}
+                            />
+                        </div>
 
-                {/* Sent Requests */}
-                <SentRequests sentRequests={sentRequests} />
-
-                {/* Friends List */}
-                <FriendsList friends={friends} />
-
-                {/* Users List */}
-                <UsersList
-                    users={users}
-                    friends={friends}
-                    sentRequests={sentRequests}
-                    handleSendRequest={handleSendRequest}
-                    handleUnfriend={handleRemoveFriend}
-                />
-
-                {/* Recommended Friends */}
-                <RecommendedFriends
-                    recommendedFriends={recommendedFriends}
-                    handleSendRequest={handleSendRequest}
-                />
+                        <div>
+                            <h2 className="text-white text-2xl bg-purple-600 px-4 py-2 my-4 rounded-md font-semibold">Your Friends</h2>
+                            <FriendsList friends={friends} />
+                        </div>
+                    </div>
+                </div>
             </div>
         </Suspense>
     );
