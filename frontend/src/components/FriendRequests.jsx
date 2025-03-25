@@ -10,7 +10,7 @@ const FriendRequests = ({ friendRequests, handleAcceptRequest, handleRejectReque
         {friendRequests.length === 0 ? (
           <p className="text-gray-500">No new friend requests</p>
         ) : (
-          <div className="w-full max-w-[80%]">
+          <div className="w-full max-w-[90%]">
             {friendRequests.map((request) => (
               <UserCard
                 key={request._id}

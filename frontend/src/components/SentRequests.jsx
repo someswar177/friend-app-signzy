@@ -10,7 +10,7 @@ const SentRequests = ({ sentRequests }) => {
       {sentRequests.length === 0 ? (
         <p className="text-gray-500">No pending requests</p>
       ) : (
-        <div className="w-full max-w-[80%]">
+        <div className="w-full max-w-[90%]">
           {sentRequests.map((request) => (
             <UserCard key={request._id} user={request} isPending={true} />
           ))}
