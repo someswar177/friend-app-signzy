@@ -5,7 +5,7 @@ import { Github, Twitter, Linkedin, MessageSquare } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post("http://localhost:8800/api/user/login", {
-        email,
+        username,
         password,
       });
       login(data.token); // Save token in Auth Context
@@ -27,6 +27,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex relative px-10 py-3">
+      {/* Left Section */}
       <div className="hidden md:flex md:w-3/6 bg-blue-600 p-12 flex-col justify-center items-center text-center relative 
         [clip-path:polygon(0_0,100%_0,75%_100%,0%_100%)]">
         <div className="text-white text-4xl font-bold">FRIEND FINDER APP</div>
@@ -38,6 +39,7 @@ const Login = () => {
         </div>
       </div>
 
+      {/* Right Section */}
       <div className="flex-1 flex items-center justify-center p-8 relative bg-white 
         [clip-path:polygon(15%_0,100%_0,100%_100%,0%_100%)]">
         <div className="w-full max-w-md">
@@ -49,14 +51,14 @@ const Login = () => {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email address
+                Username
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-2 rounded-lg border bg-gray-50"
-                placeholder="johndoe@gmail.com"
+                placeholder="Enter your username"
                 required
               />
             </div>
@@ -74,10 +76,6 @@ const Login = () => {
                 required
               />
             </div>
-
-            <a href="#" className="text-blue-600 text-sm block mb-4">
-              Forgot password?
-            </a>
 
             <button
               type="submit"

@@ -5,7 +5,6 @@ import { Github, Twitter, Linkedin, MessageSquare } from "lucide-react";
 
 const Register = () => {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -15,7 +14,6 @@ const Register = () => {
     try {
       await axios.post("http://localhost:8800/api/user/signup", {
         username,
-        email,
         password,
       });
       navigate("/"); // Redirect to login after successful registration
@@ -26,6 +24,7 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex relative px-10 py-3">
+      {/* Left Section */}
       <div className="hidden md:flex md:w-3/6 bg-blue-600 p-12 flex-col justify-center items-center text-center relative 
         [clip-path:polygon(0_0,100%_0,75%_100%,0%_100%)]">
         <div className="text-white text-4xl font-bold">FRIEND FINDER APP</div>
@@ -37,6 +36,7 @@ const Register = () => {
         </div>
       </div>
 
+      {/* Right Section */}
       <div className="flex-1 flex items-center justify-center p-8 relative bg-white 
         [clip-path:polygon(15%_0,100%_0,100%_100%,0%_100%)]">
         <div className="w-full max-w-md">
@@ -56,20 +56,6 @@ const Register = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-2 rounded-lg border bg-gray-50"
                 placeholder="Enter your username"
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 rounded-lg border bg-gray-50"
-                placeholder="johndoe@gmail.com"
                 required
               />
             </div>
